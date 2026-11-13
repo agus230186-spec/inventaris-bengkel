@@ -3,202 +3,885 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flowchart Utama Sistem Aplikasi Peminjaman Alat Bengkel TI</title>
+  <title>SIM-BENGKEL TI | Sistem Peminjaman Alat Bengkel TI</title>
+  <!-- Bootstrap 5 & Bootstrap Icons CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    :root {
+      --primary-dark: #0b2d52;
+      --primary-accent: #1b497b;
+      --bg-light: #f4f7f9;
     }
     body {
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background-color: #f4f7f9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
+      background-color: var(--bg-light);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     }
-    .canvas-container {
-      background: radial-gradient(circle at center, #ffffff 60%, #edf2f6 100%);
+    .navbar-custom {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary-accent));
+    }
+    .stat-card {
+      border: none;
       border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(10, 42, 77, 0.08);
-      padding: 25px;
-      max-width: 1150px;
-      width: 100%;
-      overflow-x: auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s;
     }
-    svg {
-      width: 100%;
-      height: auto;
-      display: block;
+    .stat-card:hover {
+      transform: translateY(-3px);
     }
-    .title {
-      font-size: 23px;
-      font-weight: 800;
-      fill: #0b2d52;
-      letter-spacing: 0.5px;
+    .card-panel {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
     }
-    .node-text {
-      font-size: 14.5px;
+    .nav-pills .nav-link {
+      color: var(--primary-dark);
       font-weight: 600;
-      fill: #0f172a;
-      text-anchor: middle;
-      dominant-baseline: central;
+      border-radius: 8px;
+      margin-right: 6px;
     }
-    .label-text {
-      font-size: 14.5px;
-      font-weight: 700;
-      fill: #0f172a;
+    .nav-pills .nav-link.active {
+      background-color: var(--primary-accent);
+      color: #fff;
     }
-    .line {
-      stroke: #1b497b;
-      stroke-width: 2.3;
-      fill: none;
+    .badge-status {
+      font-size: 0.8rem;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+    @media print {
+      .no-print { display: none !important; }
+      body { background-color: #fff; }
+      .card-panel { box-shadow: none; border: 1px solid #ddd; }
     }
   </style>
 </head>
 <body>
 
-<div class="canvas-container">
-  <svg viewBox="0 0 1100 680" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <!-- Definisi Ujung Panah -->
-      <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
-        <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#1b497b" />
-      </marker>
+  <!-- ==================== HALAMAN LOGIN (FR-01) ==================== -->
+  <div id="login-screen" class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card card-panel p-4 p-md-5" style="max-width: 440px; width: 100%;">
+      <div class="text-center mb-4">
+        <div class="bg-primary bg-opacity-10 text-primary d-inline-flex p-3 rounded-circle mb-3">
+          <i class="bi bi-tools fs-1"></i>
+        </div>
+        <h4 class="fw-bold text-dark">SIM-BENGKEL TI</h4>
+        <p class="text-muted small">Sistem Informasi Peminjaman &amp; Inventaris Alat Laboratorium TI</p>
+      </div>
 
-      <!-- Gradien Warna Bentuk -->
-      <linearGradient id="grad-term" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#cbe8e3" />
-        <stop offset="100%" stop-color="#b4ded7" />
-      </linearGradient>
+      <form id="login-form">
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Pilih Peran Pengguna (Demo FR-01)</label>
+          <select id="login-role" class="form-select" required>
+            <option value="PLP">Pranata Laboratorium Pendidikan (PLP)</option>
+            <option value="KABENG">Kepala Bengkel TI</option>
+            <option value="PEMINJAM">Peminjam (Mahasiswa / Dosen)</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Username / NIP / NIM</label>
+          <input type="text" id="login-username" class="form-control" value="plp_bengkel" required>
+        </div>
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Password</label>
+          <input type="password" id="login-password" class="form-control" value="123456" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+          <i class="bi bi-box-arrow-in-right me-1"></i> Masuk ke Sistem
+        </button>
+      </form>
+      <div class="mt-3 text-center">
+        <small class="text-muted">Tips Demo: Pilih peran di atas untuk melihat perbedaan hak akses.</small>
+      </div>
+    </div>
+  </div>
 
-      <linearGradient id="grad-proc" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#9cb2ca" />
-        <stop offset="100%" stop-color="#87a1be" />
-      </linearGradient>
+  <!-- ==================== APLIKASI UTAMA ==================== -->
+  <div id="app-screen" class="d-none">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom shadow-sm no-print">
+      <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
+          <i class="bi bi-cpu me-2 fs-4"></i> SIM-BENGKEL TI
+        </a>
+        <div class="d-flex align-items-center text-white">
+          <span class="badge bg-warning text-dark me-3" id="badge-role">PLP</span>
+          <span class="me-3 small d-none d-sm-inline" id="user-display">Halo, Petugas PLP</span>
+          <button class="btn btn-outline-light btn-sm" onclick="logout()">
+            <i class="bi bi-box-arrow-left"></i> Keluar
+          </button>
+        </div>
+      </div>
+    </nav>
 
-      <linearGradient id="grad-sub" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#e3eef8" />
-        <stop offset="100%" stop-color="#d2e4f4" />
-      </linearGradient>
+    <div class="container my-4">
+      <!-- Alert Peringatan Keterlambatan Otomatis (FR-06) -->
+      <div id="overdue-banner" class="alert alert-danger d-none align-items-center justify-content-between shadow-sm" role="alert">
+        <div>
+          <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+          <strong>Peringatan Keterlambatan (FR-06):</strong> Terdapat <span id="overdue-count" class="fw-bold">0</span> peminjaman alat yang melewati batas waktu pengembalian!
+        </div>
+        <button class="btn btn-sm btn-danger" onclick="switchTab('tab-pengembalian')">Lihat Detail</button>
+      </div>
 
-      <linearGradient id="grad-dec" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#f7faff" />
-        <stop offset="100%" stop-color="#e8f0f9" />
-      </linearGradient>
-    </defs>
+      <!-- Statistik Ringkasan Real-Time (FR-05 & NFR-01) -->
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+          <div class="card stat-card p-3 border-start border-4 border-primary">
+            <small class="text-muted fw-semibold">Total Unit Alat</small>
+            <h3 class="fw-bold mb-0 mt-1" id="stat-total">0</h3>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card stat-card p-3 border-start border-4 border-success">
+            <small class="text-muted fw-semibold">Tersedia</small>
+            <h3 class="fw-bold text-success mb-0 mt-1" id="stat-tersedia">0</h3>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card stat-card p-3 border-start border-4 border-warning">
+            <small class="text-muted fw-semibold">Sedang Dipinjam</small>
+            <h3 class="fw-bold text-warning mb-0 mt-1" id="stat-dipinjam">0</h3>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card stat-card p-3 border-start border-4 border-danger">
+            <small class="text-muted fw-semibold">Terlambat / Perbaikan</small>
+            <h3 class="fw-bold text-danger mb-0 mt-1" id="stat-masalah">0</h3>
+          </div>
+        </div>
+      </div>
 
-    <!-- JUDUL UTAMA -->
-    <text x="550" y="42" class="title" text-anchor="middle">
-      FLOWCHART UTAMA SISTEM APLIKASI PEMINJAMAN ALAT BENGKEL TI
-    </text>
+      <!-- Navigasi Tab Berdasarkan Hak Akses -->
+      <ul class="nav nav-pills mb-4 no-print" id="main-tabs">
+        <li class="nav-item" id="nav-dashboard">
+          <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-dashboard">
+            <i class="bi bi-speedometer2 me-1"></i> Pemantauan Real-Time (FR-05)
+          </button>
+        </li>
+        <li class="nav-item" id="nav-peminjaman">
+          <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-peminjaman">
+            <i class="bi bi-arrow-up-right-circle me-1"></i> Peminjaman (FR-03)
+          </button>
+        </li>
+        <li class="nav-item" id="nav-pengembalian">
+          <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-pengembalian">
+            <i class="bi bi-arrow-down-left-circle me-1"></i> Pengembalian (FR-04)
+          </button>
+        </li>
+        <li class="nav-item" id="nav-inventaris">
+          <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-inventaris">
+            <i class="bi bi-box-seam me-1"></i> Master Alat (FR-02)
+          </button>
+        </li>
+        <li class="nav-item" id="nav-laporan">
+          <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-laporan">
+            <i class="bi bi-file-earmark-bar-graph me-1"></i> Riwayat &amp; Laporan (FR-07)
+          </button>
+        </li>
+      </ul>
 
-    <!-- 1. MULAI (Terminator) -->
-    <rect x="492" y="72" width="116" height="38" rx="19" fill="url(#grad-term)" stroke="#3b6e8c" stroke-width="2" />
-    <text x="550" y="91" class="node-text">Mulai</text>
+      <!-- Konten Tab -->
+      <div class="tab-content">
+        
+        <!-- 1. TAB PEMANTAUAN REAL-TIME / KATALOG (FR-05) -->
+        <div class="tab-pane fade show active" id="tab-dashboard">
+          <div class="card card-panel p-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+              <h5 class="fw-bold mb-0">Ketersediaan &amp; Status Alat Bengkel TI (Real-Time)</h5>
+              <div class="d-flex gap-2">
+                <input type="text" id="search-alat" class="form-control form-control-sm" placeholder="Cari nama / kode alat..." onkeyup="renderAll()">
+                <select id="filter-status" class="form-select form-select-sm" onchange="renderAll()">
+                  <option value="ALL">Semua Status</option>
+                  <option value="Tersedia">Tersedia</option>
+                  <option value="Sedang Dipinjam">Sedang Dipinjam</option>
+                  <option value="Dalam Perbaikan">Dalam Perbaikan</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Kode Inventaris</th>
+                    <th>Nama Alat</th>
+                    <th>Kategori</th>
+                    <th>Spesifikasi / Merek</th>
+                    <th>Kondisi Fisik</th>
+                    <th>Status Ketersediaan</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-dashboard"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
 
-    <!-- Panah Mulai -> Input -->
-    <line x1="550" y1="110" x2="550" y2="136" class="line" marker-end="url(#arrow)" />
+        <!-- 2. TAB PENCATATAN PEMINJAMAN (FR-03 & NFR-05) -->
+        <div class="tab-pane fade" id="tab-peminjaman">
+          <div class="row g-4">
+            <div class="col-lg-5">
+              <div class="card card-panel p-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-plus-circle text-primary me-1"></i> Form Transaksi Peminjaman</h5>
+                <form id="form-pinjam">
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">NIM / NIP Peminjam <span class="text-danger">*</span></label>
+                    <input type="text" id="pinjam-nim" class="form-control" placeholder="Contoh: 2305102011" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Nama Lengkap Peminjam <span class="text-danger">*</span></label>
+                    <input type="text" id="pinjam-nama" class="form-control" placeholder="Contoh: Ahmad Fauzi (TI-3A)" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">No. HP / WhatsApp</label>
+                    <input type="text" id="pinjam-kontak" class="form-control" placeholder="0812xxxxxxxx" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Pilih Alat (Hanya Status Tersedia - NFR-05) <span class="text-danger">*</span></label>
+                    <select id="pinjam-alat" class="form-select" required></select>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Batas Waktu Pengembalian <span class="text-danger">*</span></label>
+                    <input type="datetime-local" id="pinjam-tenggat" class="form-control" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                    <i class="bi bi-check2-circle me-1"></i> Simpan Peminjaman &amp; Cetak Bukti
+                  </button>
+                </form>
+              </div>
+            </div>
+            <div class="col-lg-7">
+              <div class="card card-panel p-4">
+                <h5 class="fw-bold mb-3">Daftar Peminjaman Aktif Saat Ini</h5>
+                <div class="table-responsive">
+                  <table class="table table-sm table-bordered align-middle">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Kode</th>
+                        <th>Peminjam</th>
+                        <th>Alat</th>
+                        <th>Batas Kembali</th>
+                        <th>Status</th>
+                        <th>Bukti</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tbody-pinjam-aktif"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <!-- 2. INPUT USERNAME & PASSWORD (Parallelogram) -->
-    <polygon points="480,138 640,138 618,186 458,186" fill="url(#grad-proc)" stroke="#1b497b" stroke-width="2" />
-    <text x="550" y="155" class="node-text">Input Username</text>
-    <text x="550" y="172" class="node-text">&amp; Password</text>
+        <!-- 3. TAB PENGEMBALIAN ALAT (FR-04 & FR-06) -->
+        <div class="tab-pane fade" id="tab-pengembalian">
+          <div class="card card-panel p-4">
+            <h5 class="fw-bold mb-3">Proses Pengembalian &amp; Verifikasi Kondisi Alat</h5>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Kode Transaksi</th>
+                    <th>Peminjam (NIM/NIP)</th>
+                    <th>Kode &amp; Nama Alat</th>
+                    <th>Waktu Pinjam</th>
+                    <th>Tenggat Kembali</th>
+                    <th>Status Waktu</th>
+                    <th>Aksi Pengembalian</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-pengembalian"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
 
-    <!-- Panah Input -> Validasi Login -->
-    <line x1="550" y1="186" x2="550" y2="212" class="line" marker-end="url(#arrow)" />
+        <!-- 4. TAB MANAJEMEN INVENTARIS ALAT (FR-02) -->
+        <div class="tab-pane fade" id="tab-inventaris">
+          <div class="row g-4">
+            <div class="col-md-4">
+              <div class="card card-panel p-4">
+                <h5 class="fw-bold mb-3">Tambah Unit Alat Baru</h5>
+                <form id="form-tambah-alat">
+                  <div class="mb-2">
+                    <label class="form-label small fw-semibold">Kode Inventaris / Barcode</label>
+                    <input type="text" id="alat-kode" class="form-control form-control-sm" placeholder="Contoh: INV-TI-007" required>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small fw-semibold">Nama Alat</label>
+                    <input type="text" id="alat-nama" class="form-control form-control-sm" placeholder="Contoh: Multimeter Digital" required>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small fw-semibold">Kategori</label>
+                    <select id="alat-kategori" class="form-select form-select-sm">
+                      <option value="Alat Ukur">Alat Ukur (Multimeter, LAN Tester)</option>
+                      <option value="Perkakas Jaringan">Perkakas Jaringan (Tang Crimping)</option>
+                      <option value="Komputer & Laptop">Komputer &amp; Laptop</option>
+                      <option value="Perangkat IoT">Perangkat IoT &amp; Mikrokontroler</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label small fw-semibold">Merek / Spesifikasi</label>
+                    <input type="text" id="alat-spek" class="form-control form-control-sm" placeholder="Contoh: Sanwa CD800a" required>
+                  </div>
+                  <button type="submit" class="btn btn-success btn-sm w-100 fw-semibold">
+                    <i class="bi bi-plus-lg"></i> Tambahkan ke Inventaris
+                  </button>
+                </form>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div class="card card-panel p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h5 class="fw-bold mb-0">Master Data Inventaris Alat</h5>
+                  <button class="btn btn-outline-secondary btn-sm" onclick="resetDemoData()">
+                    <i class="bi bi-arrow-clockwise"></i> Reset Data Demo
+                  </button>
+                </div>
+                <div class="table-responsive">
+                  <table class="table table-sm table-striped align-middle">
+                    <thead>
+                      <tr>
+                        <th>Kode</th>
+                        <th>Nama Alat</th>
+                        <th>Kategori</th>
+                        <th>Spesifikasi</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tbody-master-alat"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <!-- 3. VALIDASI LOGIN? (FR-01) (Diamond) -->
-    <polygon points="550,214 636,246 550,278 464,246" fill="url(#grad-dec)" stroke="#1b497b" stroke-width="2" />
-    <text x="550" y="239" class="node-text">Validasi Login?</text>
-    <text x="550" y="256" class="node-text">(FR-01)</text>
+        <!-- 5. TAB RIWAYAT & LAPORAN (FR-07) -->
+        <div class="tab-pane fade" id="tab-laporan">
+          <div class="card card-panel p-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+              <div>
+                <h5 class="fw-bold mb-0">Log Riwayat &amp; Rekapitulasi Transaksi</h5>
+                <small class="text-muted">Mencatat seluruh riwayat peminjaman, pengembalian, dan keterlambatan secara permanen.</small>
+              </div>
+              <div class="no-print d-flex gap-2">
+                <button class="btn btn-outline-success btn-sm" onclick="exportCSV()">
+                  <i class="bi bi-file-earmark-excel"></i> Ekspor CSV/Excel
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="window.print()">
+                  <i class="bi bi-printer"></i> Cetak Laporan
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-bordered table-sm align-middle">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Kode Trx</th>
+                    <th>Peminjam</th>
+                    <th>Alat Dipinjam</th>
+                    <th>Waktu Pinjam</th>
+                    <th>Tenggat</th>
+                    <th>Waktu Kembali</th>
+                    <th>Kondisi Kembali</th>
+                    <th>Status Akhir</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-laporan"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
 
-    <!-- Jalur Loop "Tidak" kembali ke Input -->
-    <path d="M 636 246 L 675 246 Q 683 246 683 238 L 683 170 Q 683 162 675 162 L 632 162" class="line" marker-end="url(#arrow)" />
-    <text x="640" y="237" class="label-text">Tidak</text>
+      </div>
+    </div>
+  </div>
 
-    <!-- Panah Validasi -> Cek Peran ("Ya") -->
-    <line x1="550" y1="278" x2="550" y2="306" class="line" marker-end="url(#arrow)" />
-    <text x="558" y="295" class="label-text">Ya</text>
+  <!-- MODAL VERIFIKASI PENGEMBALIAN (FR-04) -->
+  <div class="modal fade" id="modalKembali" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold">Verifikasi Pengembalian Alat</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="kembali-trx-id">
+          <p class="mb-2">Transaksi: <strong id="kembali-info-trx"></strong></p>
+          <p class="mb-3">Alat: <strong id="kembali-info-alat"></strong></p>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Kondisi Fisik Alat Saat Dikembalikan (FR-04)</label>
+            <select id="kembali-kondisi" class="form-select">
+              <option value="Baik">Baik / Normal (Status otomatis kembali Tersedia)</option>
+              <option value="Rusak">Rusak / Bermasalah (Status otomatis Dalam Perbaikan)</option>
+            </select>
+          </div>
+          <div class="mb-2">
+            <label class="form-label fw-semibold">Catatan Petugas PLP</label>
+            <input type="text" id="kembali-catatan" class="form-control" placeholder="Opsional (misal: kabel probe aman / layar retak)">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-success" onclick="prosesPengembalian()">Konfirmasi Pengembalian</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <!-- 4. CEK PERAN PENGGUNA? (Diamond) -->
-    <polygon points="550,308 636,340 550,372 464,340" fill="url(#grad-dec)" stroke="#1b497b" stroke-width="2" />
-    <text x="550" y="333" class="node-text">Cek Peran</text>
-    <text x="550" y="350" class="node-text">Pengguna?</text>
+  <!-- MODAL BUKTI TRANSAKSI -->
+  <div class="modal fade" id="modalBukti" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title fw-bold"><i class="bi bi-receipt me-1"></i> Bukti Peminjaman Alat Bengkel TI</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="bukti-content"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-primary btn-sm" onclick="window.print()">Cetak Struk</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <!-- ==================== CABANG 1: PLP (KIRI) ==================== -->
-    <path d="M 464 340 L 266 340 Q 258 340 258 348 L 258 400" class="line" marker-end="url(#arrow)" />
-    <text x="270" y="391" class="label-text">PLP</text>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // ==================== DATA AWAL (ENTITAS ITEMS & LOANS) ====================
+    const defaultItems = [
+      { id: 'INV-TI-001', nama: 'Multimeter Digital', kategori: 'Alat Ukur', spek: 'Sanwa CD800a', kondisi: 'Baik', status: 'Tersedia' },
+      { id: 'INV-TI-002', nama: 'Tang Crimping RJ45', kategori: 'Perkakas Jaringan', spek: 'Pro\'sKit CP-376TR', kondisi: 'Baik', status: 'Sedang Dipinjam' },
+      { id: 'INV-TI-003', nama: 'Laptop Praktikum 01', kategori: 'Komputer & Laptop', spek: 'Lenovo ThinkPad i5 RAM 16GB', kondisi: 'Baik', status: 'Tersedia' },
+      { id: 'INV-TI-004', nama: 'LAN Cable Tester', kategori: 'Alat Ukur', spek: 'Noyafa NF-468', kondisi: 'Baik', status: 'Tersedia' },
+      { id: 'INV-TI-005', nama: 'Laptop Praktikum 02', kategori: 'Komputer & Laptop', spek: 'ASUS Vivobook i7', kondisi: 'Baik', status: 'Sedang Dipinjam' },
+      { id: 'INV-TI-006', nama: 'ESP32 IoT Starter Kit', kategori: 'Perangkat IoT', spek: 'ESP32 DevKit V1 + Sensor', kondisi: 'Rusak', status: 'Dalam Perbaikan' }
+    ];
 
-    <!-- Dasbor PLP -->
-    <rect x="155" y="402" width="206" height="32" rx="4" fill="url(#grad-sub)" stroke="#1b497b" stroke-width="2" />
-    <text x="258" y="418" class="node-text">Dasbor PLP</text>
-    <line x1="258" y1="434" x2="258" y2="442" class="line" />
+    // Membuat contoh 1 transaksi terlambat & 1 transaksi aktif
+    const now = new Date();
+    const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
+    const twoDaysAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000).toISOString().slice(0, 16);
+    const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
 
-    <!-- Kelola Data Alat (FR-02) -->
-    <rect x="155" y="442" width="206" height="32" rx="4" fill="url(#grad-proc)" stroke="#1b497b" stroke-width="2" />
-    <text x="258" y="458" class="node-text">Kelola Data Alat (FR-02)</text>
-    <line x1="258" y1="474" x2="258" y2="482" class="line" />
+    const defaultLoans = [
+      {
+        trxId: 'TRX-2026001',
+        nim: '2305102045',
+        nama: 'Rizky Pratama',
+        kontak: '081265432100',
+        itemId: 'INV-TI-002',
+        itemNama: 'Tang Crimping RJ45',
+        waktuPinjam: twoDaysAgo,
+        tenggat: yesterday, // Sudah lewat -> Terlambat otomatis
+        waktuKembali: null,
+        kondisiKembali: '-',
+        catatan: '-',
+        status: 'Dipinjam'
+      },
+      {
+        trxId: 'TRX-2026002',
+        nim: '2305102088',
+        nama: 'Siti Rahmawati',
+        kontak: '081377889900',
+        itemId: 'INV-TI-005',
+        itemNama: 'Laptop Praktikum 02',
+        waktuPinjam: now.toISOString().slice(0, 16),
+        tenggat: tomorrow,
+        waktuKembali: null,
+        kondisiKembali: '-',
+        catatan: '-',
+        status: 'Dipinjam'
+      }
+    ];
 
-    <!-- Proses Peminjaman (FR-03) -->
-    <rect x="155" y="482" width="206" height="32" rx="4" fill="url(#grad-proc)" stroke="#1b497b" stroke-width="2" />
-    <text x="258" y="498" class="node-text">Proses Peminjaman (FR-03)</text>
-    <line x1="258" y1="514" x2="258" y2="522" class="line" />
+    let items = JSON.parse(localStorage.getItem('bengkel_items')) || defaultItems;
+    let loans = JSON.parse(localStorage.getItem('bengkel_loans')) || defaultLoans;
+    let currentRole = 'PLP';
 
-    <!-- Proses Pengembalian (FR-04) -->
-    <rect x="155" y="522" width="206" height="32" rx="4" fill="url(#grad-proc)" stroke="#1b497b" stroke-width="2" />
-    <text x="258" y="538" class="node-text">Proses Pengembalian (FR-04)</text>
-    <line x1="258" y1="554" x2="258" y2="562" class="line" />
+    function saveData() {
+      localStorage.setItem('bengkel_items', JSON.stringify(items));
+      localStorage.setItem('bengkel_loans', JSON.stringify(loans));
+    }
 
-    <!-- Laporan (FR-07) -->
-    <rect x="155" y="562" width="206" height="32" rx="4" fill="url(#grad-proc)" stroke="#1b497b" stroke-width="2" />
-    <text x="258" y="578" class="node-text">Laporan (FR-07)</text>
+    function resetDemoData() {
+      if (confirm('Kembalikan data ke pengaturan awal demo?')) {
+        localStorage.removeItem('bengkel_items');
+        localStorage.removeItem('bengkel_loans');
+        location.reload();
+      }
+    }
 
-    <!-- ==================== CABANG 2: KEPALA BENGKEL TI (TENGAH) ==================== -->
-    <line x1="550" y1="372" x2="550" y2="400" class="line" marker-end="url(#arrow)" />
-    <text x="560" y="391" class="label-text">Kepala Bengkel TI</text>
+    // ==================== AUTENTIKASI & RBAC (FR-01) ====================
+    document.getElementById('login-role').addEventListener('change', function() {
+      const mapUser = {
+        'PLP': 'plp_bengkel',
+        'KABENG': 'kepala_bengkel',
+        'PEMINJAM': '2305102011'
+      };
+      document.getElementById('login-username').value = mapUser[this.value];
+    });
 
-    <!-- Dasbor Monitoring Real-Time (FR-05) -->
-    <rect x="458" y="402" width="184" height="44" rx="4" fill="url(#grad-sub)" stroke="#1b497b" stroke-width="2" />
-    <text x="550" y="416" class="node-text">Dasbor Monitoring Real-</text>
-    <text x="550" y="433" class="node-text">Time (FR-05)</text>
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      currentRole = document.getElementById('login-role').value;
+      const username = document.getElementById('login-username').value;
 
-    <line x1="550" y1="446" x2="550" y2="476" class="line" marker-end="url(#arrow)" />
+      document.getElementById('login-screen').classList.add('d-none');
+      document.getElementById('app-screen').classList.remove('d-none');
 
-    <!-- Cetak Laporan Periodik (FR-07) -->
-    <rect x="458" y="478" width="184" height="44" rx="4" fill="url(#grad-proc)" stroke="#1b497b" stroke-width="2" />
-    <text x="550" y="492" class="node-text">Cetak Laporan Periodik</text>
-    <text x="550" y="509" class="node-text">(FR-07)</text>
+      const roleLabels = {
+        'PLP': 'PLP (Administrator)',
+        'KABENG': 'Kepala Bengkel TI',
+        'PEMINJAM': 'Peminjam (Mahasiswa/Dosen)'
+      };
 
-    <!-- ==================== CABANG 3: PEMINJAM (KANAN) ==================== -->
-    <path d="M 636 340 L 834 340 Q 842 340 842 348 L 842 400" class="line" marker-end="url(#arrow)" />
-    <text x="852" y="391" class="label-text">Peminjam</text>
+      document.getElementById('badge-role').textContent = roleLabels[currentRole];
+      document.getElementById('user-display').textContent = `Akun: ${username}`;
 
-    <!-- Katalog Ketersediaan Alat -->
-    <rect x="742" y="402" width="200" height="36" rx="4" fill="url(#grad-sub)" stroke="#1b497b" stroke-width="2" />
-    <text x="842" y="420" class="node-text">Katalog Ketersediaan Alat</text>
+      applyRolePermissions();
+      setDefaultTenggat();
+      renderAll();
+    });
 
-    <line x1="842" y1="438" x2="842" y2="470" class="line" marker-end="url(#arrow)" />
+    function logout() {
+      document.getElementById('app-screen').classList.add('d-none');
+      document.getElementById('login-screen').classList.remove('d-none');
+    }
 
-    <!-- Cek Riwayat & Tenggat -->
-    <rect x="742" y="472" width="200" height="36" rx="4" fill="url(#grad-proc)" stroke="#1b497b" stroke-width="2" />
-    <text x="842" y="490" class="node-text">Cek Riwayat &amp; Tenggat</text>
+    function applyRolePermissions() {
+      // Tampilkan semua tab terlebih dahulu
+      ['nav-dashboard', 'nav-peminjaman', 'nav-pengembalian', 'nav-inventaris', 'nav-laporan'].forEach(id => {
+        document.getElementById(id).classList.remove('d-none');
+      });
 
-    <!-- ==================== GARIS PENGGABUNG KE SELESAI ==================== -->
-    <!-- Jalur PLP ke tengah -->
-    <path d="M 258 594 L 258 606 Q 258 612 264 612 L 548 612" class="line" marker-end="url(#arrow)" />
-    <!-- Jalur Peminjam ke tengah -->
-    <path d="M 842 508 L 842 606 Q 842 612 836 612 L 552 612" class="line" marker-end="url(#arrow)" />
-    <!-- Jalur Kepala Bengkel lurus ke Selesai -->
-    <line x1="550" y1="522" x2="550" y2="634" class="line" marker-end="url(#arrow)" />
+      // Batasi menu berdasarkan peran (FR-01)
+      if (currentRole === 'KABENG') {
+        document.getElementById('nav-peminjaman').classList.add('d-none');
+        document.getElementById('nav-pengembalian').classList.add('d-none');
+        document.getElementById('nav-inventaris').classList.add('d-none');
+      } else if (currentRole === 'PEMINJAM') {
+        document.getElementById('nav-peminjaman').classList.add('d-none');
+        document.getElementById('nav-pengembalian').classList.add('d-none');
+        document.getElementById('nav-inventaris').classList.add('d-none');
+      }
+      switchTab('tab-dashboard');
+    }
 
-    <!-- 5. SELESAI (Terminator) -->
-    <rect x="498" y="636" width="104" height="36" rx="18" fill="url(#grad-term)" stroke="#3b6e8c" stroke-width="2" />
-    <text x="550" y="654" class="node-text">Selesai</text>
-  </svg>
-</div>
+    function switchTab(tabId) {
+      const triggerEl = document.querySelector(`button[data-bs-target="#${tabId}"]`);
+      if (triggerEl) bootstrap.Tab.getOrCreateInstance(triggerEl).show();
+    }
 
+    function setDefaultTenggat() {
+      const next4Hours = new Date(new Date().getTime() + 4 * 60 * 60 * 1000);
+      document.getElementById('pinjam-tenggat').value = next4Hours.toISOString().slice(0, 16);
+    }
+
+    // ==================== RENDER & LOGIKA REAL-TIME ====================
+    function isOverdue(tenggatStr) {
+      return new Date() > new Date(tenggatStr);
+    }
+
+    function formatDateTime(dtStr) {
+      if (!dtStr) return '-';
+      return dtStr.replace('T', ' ');
+    }
+
+    function renderAll() {
+      // Hitung keterlambatan (FR-06)
+      let overdueCount = 0;
+      loans.forEach(l => {
+        if (l.status === 'Dipinjam' && isOverdue(l.tenggat)) overdueCount++;
+      });
+
+      const banner = document.getElementById('overdue-banner');
+      if (overdueCount > 0 && currentRole !== 'PEMINJAM') {
+        banner.classList.remove('d-none');
+        banner.classList.add('d-flex');
+        document.getElementById('overdue-count').textContent = overdueCount;
+      } else {
+        banner.classList.add('d-none');
+        banner.classList.remove('d-flex');
+      }
+
+      // Update Statistik (FR-05 & NFR-01)
+      const total = items.length;
+      const tersedia = items.filter(i => i.status === 'Tersedia').length;
+      const dipinjam = items.filter(i => i.status === 'Sedang Dipinjam').length;
+      const perbaikan = items.filter(i => i.status === 'Dalam Perbaikan').length;
+
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-tersedia').textContent = tersedia;
+      document.getElementById('stat-dipinjam').textContent = dipinjam;
+      document.getElementById('stat-masalah').textContent = `${overdueCount} / ${perbaikan}`;
+
+      // Render Tabel Dasbor Real-Time
+      const keyword = document.getElementById('search-alat').value.toLowerCase();
+      const filterStatus = document.getElementById('filter-status').value;
+      const tbodyDash = document.getElementById('tbody-dashboard');
+      tbodyDash.innerHTML = '';
+
+      items.filter(item => {
+        const matchText = item.nama.toLowerCase().includes(keyword) || item.id.toLowerCase().includes(keyword);
+        const matchStatus = filterStatus === 'ALL' || item.status === filterStatus;
+        return matchText && matchStatus;
+      }).forEach(item => {
+        let badgeClass = 'bg-success';
+        if (item.status === 'Sedang Dipinjam') badgeClass = 'bg-warning text-dark';
+        if (item.status === 'Dalam Perbaikan') badgeClass = 'bg-danger';
+
+        tbodyDash.innerHTML += `
+          <tr>
+            <td class="fw-semibold">${item.id}</td>
+            <td>${item.nama}</td>
+            <td>${item.kategori}</td>
+            <td>${item.spek}</td>
+            <td>${item.kondisi}</td>
+            <td><span class="badge badge-status ${badgeClass}">${item.status}</span></td>
+          </tr>
+        `;
+      });
+
+      // Dropdown Pilihan Alat Tersedia (NFR-05: Mencegah Peminjaman Ganda)
+      const selectAlat = document.getElementById('pinjam-alat');
+      selectAlat.innerHTML = '<option value="">-- Pilih Alat Tersedia --</option>';
+      items.filter(i => i.status === 'Tersedia').forEach(i => {
+        selectAlat.innerHTML += `<option value="${i.id}">${i.id} - ${i.nama} (${i.spek})</option>`;
+      });
+
+      // Render Tabel Peminjaman Aktif & Pengembalian
+      const tbodyAktif = document.getElementById('tbody-pinjam-aktif');
+      const tbodyKembali = document.getElementById('tbody-pengembalian');
+      tbodyAktif.innerHTML = '';
+      tbodyKembali.innerHTML = '';
+
+      loans.filter(l => l.status === 'Dipinjam').forEach(l => {
+        const telat = isOverdue(l.tenggat);
+        const statusBadge = telat
+          ? `<span class="badge bg-danger">TERLAMBAT</span>`
+          : `<span class="badge bg-primary">Aktif</span>`;
+
+        tbodyAktif.innerHTML += `
+          <tr>
+            <td class="small fw-bold">${l.trxId}</td>
+            <td class="small">${l.nama}<br><span class="text-muted">${l.nim}</span></td>
+            <td class="small">${l.itemId} - ${l.itemNama}</td>
+            <td class="small">${formatDateTime(l.tenggat)}</td>
+            <td>${statusBadge}</td>
+            <td><button class="btn btn-outline-primary btn-sm py-0" onclick="lihatBukti('${l.trxId}')"><i class="bi bi-receipt"></i></button></td>
+          </tr>
+        `;
+
+        tbodyKembali.innerHTML += `
+          <tr class="${telat ? 'table-danger' : ''}">
+            <td class="fw-bold">${l.trxId}</td>
+            <td>${l.nama} (${l.nim})</td>
+            <td>${l.itemId} - ${l.itemNama}</td>
+            <td>${formatDateTime(l.waktuPinjam)}</td>
+            <td>${formatDateTime(l.tenggat)}</td>
+            <td>${statusBadge}</td>
+            <td>
+              <button class="btn btn-success btn-sm" onclick="bukaModalKembali('${l.trxId}')">
+                <i class="bi bi-check-square me-1"></i> Proses Kembali
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      // Render Master Inventaris (FR-02)
+      const tbodyMaster = document.getElementById('tbody-master-alat');
+      tbodyMaster.innerHTML = '';
+      items.forEach(item => {
+        tbodyMaster.innerHTML += `
+          <tr>
+            <td class="fw-semibold">${item.id}</td>
+            <td>${item.nama}</td>
+            <td>${item.kategori}</td>
+            <td>${item.spek}</td>
+            <td>${item.status}</td>
+            <td>
+              ${item.status === 'Dalam Perbaikan' ? `<button class="btn btn-outline-success btn-sm py-0 me-1" onclick="selesaiPerbaikan('${item.id}')">Selesai Servis</button>` : ''}
+              <button class="btn btn-outline-danger btn-sm py-0" onclick="hapusAlat('${item.id}')"><i class="bi bi-trash"></i></button>
+            </td>
+          </tr>
+        `;
+      });
+
+      // Render Laporan & Riwayat (FR-07)
+      const tbodyLaporan = document.getElementById('tbody-laporan');
+      tbodyLaporan.innerHTML = '';
+      loans.forEach(l => {
+        const telat = l.status === 'Dipinjam' ? isOverdue(l.tenggat) : (new Date(l.waktuKembali) > new Date(l.tenggat));
+        tbodyLaporan.innerHTML += `
+          <tr>
+            <td>${l.trxId}</td>
+            <td>${l.nama} (${l.nim})</td>
+            <td>${l.itemId} - ${l.itemNama}</td>
+            <td>${formatDateTime(l.waktuPinjam)}</td>
+            <td>${formatDateTime(l.tenggat)}</td>
+            <td>${formatDateTime(l.waktuKembali)}</td>
+            <td>${l.kondisiKembali}</td>
+            <td>
+              ${l.status === 'Selesai'
+                ? `<span class="badge bg-success">Dikembalikan ${telat ? '(Telat)' : ''}</span>`
+                : `<span class="badge ${telat ? 'bg-danger' : 'bg-warning text-dark'}">${telat ? 'Terlambat' : 'Dipinjam'}</span>`}
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    // ==================== AKSI TRANSAKSI PEMINJAMAN (FR-03) ====================
+    document.getElementById('form-pinjam').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const itemId = document.getElementById('pinjam-alat').value;
+      const item = items.find(i => i.id === itemId);
+
+      // Validasi Integritas (NFR-05)
+      if (!item || item.status !== 'Tersedia') {
+        alert('Gagal: Alat tidak tersedia atau sedang dipinjam!');
+        return;
+      }
+
+      const trxId = 'TRX-' + Math.floor(100000 + Math.random() * 900000);
+      const newLoan = {
+        trxId,
+        nim: document.getElementById('pinjam-nim').value,
+        nama: document.getElementById('pinjam-nama').value,
+        kontak: document.getElementById('pinjam-kontak').value,
+        itemId: item.id,
+        itemNama: item.nama,
+        waktuPinjam: new Date().toISOString().slice(0, 16),
+        tenggat: document.getElementById('pinjam-tenggat').value,
+        waktuKembali: null,
+        kondisiKembali: '-',
+        catatan: '-',
+        status: 'Dipinjam'
+      };
+
+      // Update status stok otomatis
+      item.status = 'Sedang Dipinjam';
+      loans.unshift(newLoan);
+      saveData();
+      this.reset();
+      setDefaultTenggat();
+      renderAll();
+      lihatBukti(trxId);
+    });
+
+    function lihatBukti(trxId) {
+      const l = loans.find(x => x.trxId === trxId);
+      if (!l) return;
+      document.getElementById('bukti-content').innerHTML = `
+        <table class="table table-sm table-borderless">
+          <tr><td class="text-muted">Kode Transaksi</td><td class="fw-bold">: ${l.trxId}</td></tr>
+          <tr><td class="text-muted">Nama Peminjam</td><td>: ${l.nama} (${l.nim})</td></tr>
+          <tr><td class="text-muted">Kontak</td><td>: ${l.kontak}</td></tr>
+          <tr><td class="text-muted">Alat Dipinjam</td><td class="fw-bold">: ${l.itemId} - ${l.itemNama}</td></tr>
+          <tr><td class="text-muted">Waktu Pinjam</td><td>: ${formatDateTime(l.waktuPinjam)}</td></tr>
+          <tr><td class="text-muted">Batas Kembali</td><td class="text-danger fw-bold">: ${formatDateTime(l.tenggat)}</td></tr>
+        </table>
+        <div class="alert alert-info small mb-0">
+          Harap kembalikan alat tepat waktu sesuai tenggat yang tertera kepada petugas PLP Bengkel TI.
+        </div>
+      `;
+      new bootstrap.Modal(document.getElementById('modalBukti')).show();
+    }
+
+    // ==================== AKSI PENGEMBALIAN ALAT (FR-04) ====================
+    function bukaModalKembali(trxId) {
+      const l = loans.find(x => x.trxId === trxId);
+      if (!l) return;
+      document.getElementById('kembali-trx-id').value = trxId;
+      document.getElementById('kembali-info-trx').textContent = `${l.trxId} - ${l.nama}`;
+      document.getElementById('kembali-info-alat').textContent = `${l.itemId} (${l.itemNama})`;
+      new bootstrap.Modal(document.getElementById('modalKembali')).show();
+    }
+
+    function prosesPengembalian() {
+      const trxId = document.getElementById('kembali-trx-id').value;
+      const kondisi = document.getElementById('kembali-kondisi').value;
+      const catatan = document.getElementById('kembali-catatan').value || '-';
+
+      const l = loans.find(x => x.trxId === trxId);
+      const item = items.find(i => i.id === l.itemId);
+
+      l.waktuKembali = new Date().toISOString().slice(0, 16);
+      l.kondisiKembali = kondisi;
+      l.catatan = catatan;
+      l.status = 'Selesai';
+
+      // Perbarui status alat otomatis sesuai verifikasi fisik (FR-04)
+      if (item) {
+        item.kondisi = kondisi;
+        item.status = kondisi === 'Baik' ? 'Tersedia' : 'Dalam Perbaikan';
+      }
+
+      saveData();
+      bootstrap.Modal.getInstance(document.getElementById('modalKembali')).hide();
+      renderAll();
+    }
+
+    // ==================== AKSI MANAJEMEN INVENTARIS (FR-02) ====================
+    document.getElementById('form-tambah-alat').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const id = document.getElementById('alat-kode').value.trim().toUpperCase();
+      if (items.some(i => i.id === id)) {
+        alert('Kode inventaris sudah terdaftar!');
+        return;
+      }
+      items.push({
+        id,
+        nama: document.getElementById('alat-nama').value,
+        kategori: document.getElementById('alat-kategori').value,
+        spek: document.getElementById('alat-spek').value,
+        kondisi: 'Baik',
+        status: 'Tersedia'
+      });
+      saveData();
+      this.reset();
+      renderAll();
+    });
+
+    function selesaiPerbaikan(id) {
+      const item = items.find(i => i.id === id);
+      if (item) {
+        item.kondisi = 'Baik';
+        item.status = 'Tersedia';
+        saveData();
+        renderAll();
+      }
+    }
+
+    function hapusAlat(id) {
+      const item = items.find(i => i.id === id);
+      if (item && item.status === 'Sedang Dipinjam') {
+        alert('Alat sedang dipinjam dan tidak dapat dihapus!');
+        return;
+      }
+      if (confirm(`Hapus alat ${id} dari master data?`)) {
+        items = items.filter(i => i.id !== id);
+        saveData();
+        renderAll();
+      }
+    }
+
+    // ==================== EKSPOR LAPORAN CSV (FR-07) ====================
+    function exportCSV() {
+      let csv = 'Kode Transaksi,NIM/NIP,Nama Peminjam,Kode Alat,Nama Alat,Waktu Pinjam,Tenggat,Waktu Kembali,Kondisi,Status\n';
+      loans.forEach(l => {
+        csv += `"${l.trxId}","${l.nim}","${l.nama}","${l.itemId}","${l.itemNama}","${formatDateTime(l.waktuPinjam)}","${formatDateTime(l.tenggat)}","${formatDateTime(l.waktuKembali)}","${l.kondisiKembali}","${l.status}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'Laporan_Peminjaman_Bengkel_TI.csv';
+      link.click();
+    }
+  </script>
 </body>
 </html>
