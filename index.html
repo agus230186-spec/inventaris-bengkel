@@ -1,7 +1,204 @@
-<h1>Inventaris Bengkel TI</h1>
-<p>SMK Negeri 1</p>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flowchart Utama Sistem Aplikasi Peminjaman Alat Bengkel TI</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f7f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .canvas-container {
+      background: radial-gradient(circle at center, #ffffff 60%, #edf2f6 100%);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(10, 42, 77, 0.08);
+      padding: 25px;
+      max-width: 1150px;
+      width: 100%;
+      overflow-x: auto;
+    }
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .title {
+      font-size: 23px;
+      font-weight: 800;
+      fill: #0b2d52;
+      letter-spacing: 0.5px;
+    }
+    .node-text {
+      font-size: 14.5px;
+      font-weight: 600;
+      fill: #0f172a;
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+    .label-text {
+      font-size: 14.5px;
+      font-weight: 700;
+      fill: #0f172a;
+    }
+    .line {
+      stroke: #1b497b;
+      stroke-width: 2.3;
+      fill: none;
+    }
+  </style>
+</head>
+<body>
 
-<ul>
-    <li>Multimeter: 12 unit</li>
-    <li>Tang crimping: 8 unit</li>
-</ul>
+<div class="canvas-container">
+  <svg viewBox="0 0 1100 680" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- Definisi Ujung Panah -->
+      <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+        <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#1b497b" />
+      </marker>
+
+      <!-- Gradien Warna Bentuk -->
+      <linearGradient id="grad-term" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#cbe8e3" />
+        <stop offset="100%" stop-color="#b4ded7" />
+      </linearGradient>
+
+      <linearGradient id="grad-proc" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#9cb2ca" />
+        <stop offset="100%" stop-color="#87a1be" />
+      </linearGradient>
+
+      <linearGradient id="grad-sub" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#e3eef8" />
+        <stop offset="100%" stop-color="#d2e4f4" />
+      </linearGradient>
+
+      <linearGradient id="grad-dec" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#f7faff" />
+        <stop offset="100%" stop-color="#e8f0f9" />
+      </linearGradient>
+    </defs>
+
+    <!-- JUDUL UTAMA -->
+    <text x="550" y="42" class="title" text-anchor="middle">
+      FLOWCHART UTAMA SISTEM APLIKASI PEMINJAMAN ALAT BENGKEL TI
+    </text>
+
+    <!-- 1. MULAI (Terminator) -->
+    <rect x="492" y="72" width="116" height="38" rx="19" fill="url(#grad-term)" stroke="#3b6e8c" stroke-width="2" />
+    <text x="550" y="91" class="node-text">Mulai</text>
+
+    <!-- Panah Mulai -> Input -->
+    <line x1="550" y1="110" x2="550" y2="136" class="line" marker-end="url(#arrow)" />
+
+    <!-- 2. INPUT USERNAME & PASSWORD (Parallelogram) -->
+    <polygon points="480,138 640,138 618,186 458,186" fill="url(#grad-proc)" stroke="#1b497b" stroke-width="2" />
+    <text x="550" y="155" class="node-text">Input Username</text>
+    <text x="550" y="172" class="node-text">&amp; Password</text>
+
+    <!-- Panah Input -> Validasi Login -->
+    <line x1="550" y1="186" x2="550" y2="212" class="line" marker-end="url(#arrow)" />
+
+    <!-- 3. VALIDASI LOGIN? (FR-01) (Diamond) -->
+    <polygon points="550,214 636,246 550,278 464,246" fill="url(#grad-dec)" stroke="#1b497b" stroke-width="2" />
+    <text x="550" y="239" class="node-text">Validasi Login?</text>
+    <text x="550" y="256" class="node-text">(FR-01)</text>
+
+    <!-- Jalur Loop "Tidak" kembali ke Input -->
+    <path d="M 636 246 L 675 246 Q 683 246 683 238 L 683 170 Q 683 162 675 162 L 632 162" class="line" marker-end="url(#arrow)" />
+    <text x="640" y="237" class="label-text">Tidak</text>
+
+    <!-- Panah Validasi -> Cek Peran ("Ya") -->
+    <line x1="550" y1="278" x2="550" y2="306" class="line" marker-end="url(#arrow)" />
+    <text x="558" y="295" class="label-text">Ya</text>
+
+    <!-- 4. CEK PERAN PENGGUNA? (Diamond) -->
+    <polygon points="550,308 636,340 550,372 464,340" fill="url(#grad-dec)" stroke="#1b497b" stroke-width="2" />
+    <text x="550" y="333" class="node-text">Cek Peran</text>
+    <text x="550" y="350" class="node-text">Pengguna?</text>
+
+    <!-- ==================== CABANG 1: PLP (KIRI) ==================== -->
+    <path d="M 464 340 L 266 340 Q 258 340 258 348 L 258 400" class="line" marker-end="url(#arrow)" />
+    <text x="270" y="391" class="label-text">PLP</text>
+
+    <!-- Dasbor PLP -->
+    <rect x="155" y="402" width="206" height="32" rx="4" fill="url(#grad-sub)" stroke="#1b497b" stroke-width="2" />
+    <text x="258" y="418" class="node-text">Dasbor PLP</text>
+    <line x1="258" y1="434" x2="258" y2="442" class="line" />
+
+    <!-- Kelola Data Alat (FR-02) -->
+    <rect x="155" y="442" width="206" height="32" rx="4" fill="url(#grad-proc)" stroke="#1b497b" stroke-width="2" />
+    <text x="258" y="458" class="node-text">Kelola Data Alat (FR-02)</text>
+    <line x1="258" y1="474" x2="258" y2="482" class="line" />
+
+    <!-- Proses Peminjaman (FR-03) -->
+    <rect x="155" y="482" width="206" height="32" rx="4" fill="url(#grad-proc)" stroke="#1b497b" stroke-width="2" />
+    <text x="258" y="498" class="node-text">Proses Peminjaman (FR-03)</text>
+    <line x1="258" y1="514" x2="258" y2="522" class="line" />
+
+    <!-- Proses Pengembalian (FR-04) -->
+    <rect x="155" y="522" width="206" height="32" rx="4" fill="url(#grad-proc)" stroke="#1b497b" stroke-width="2" />
+    <text x="258" y="538" class="node-text">Proses Pengembalian (FR-04)</text>
+    <line x1="258" y1="554" x2="258" y2="562" class="line" />
+
+    <!-- Laporan (FR-07) -->
+    <rect x="155" y="562" width="206" height="32" rx="4" fill="url(#grad-proc)" stroke="#1b497b" stroke-width="2" />
+    <text x="258" y="578" class="node-text">Laporan (FR-07)</text>
+
+    <!-- ==================== CABANG 2: KEPALA BENGKEL TI (TENGAH) ==================== -->
+    <line x1="550" y1="372" x2="550" y2="400" class="line" marker-end="url(#arrow)" />
+    <text x="560" y="391" class="label-text">Kepala Bengkel TI</text>
+
+    <!-- Dasbor Monitoring Real-Time (FR-05) -->
+    <rect x="458" y="402" width="184" height="44" rx="4" fill="url(#grad-sub)" stroke="#1b497b" stroke-width="2" />
+    <text x="550" y="416" class="node-text">Dasbor Monitoring Real-</text>
+    <text x="550" y="433" class="node-text">Time (FR-05)</text>
+
+    <line x1="550" y1="446" x2="550" y2="476" class="line" marker-end="url(#arrow)" />
+
+    <!-- Cetak Laporan Periodik (FR-07) -->
+    <rect x="458" y="478" width="184" height="44" rx="4" fill="url(#grad-proc)" stroke="#1b497b" stroke-width="2" />
+    <text x="550" y="492" class="node-text">Cetak Laporan Periodik</text>
+    <text x="550" y="509" class="node-text">(FR-07)</text>
+
+    <!-- ==================== CABANG 3: PEMINJAM (KANAN) ==================== -->
+    <path d="M 636 340 L 834 340 Q 842 340 842 348 L 842 400" class="line" marker-end="url(#arrow)" />
+    <text x="852" y="391" class="label-text">Peminjam</text>
+
+    <!-- Katalog Ketersediaan Alat -->
+    <rect x="742" y="402" width="200" height="36" rx="4" fill="url(#grad-sub)" stroke="#1b497b" stroke-width="2" />
+    <text x="842" y="420" class="node-text">Katalog Ketersediaan Alat</text>
+
+    <line x1="842" y1="438" x2="842" y2="470" class="line" marker-end="url(#arrow)" />
+
+    <!-- Cek Riwayat & Tenggat -->
+    <rect x="742" y="472" width="200" height="36" rx="4" fill="url(#grad-proc)" stroke="#1b497b" stroke-width="2" />
+    <text x="842" y="490" class="node-text">Cek Riwayat &amp; Tenggat</text>
+
+    <!-- ==================== GARIS PENGGABUNG KE SELESAI ==================== -->
+    <!-- Jalur PLP ke tengah -->
+    <path d="M 258 594 L 258 606 Q 258 612 264 612 L 548 612" class="line" marker-end="url(#arrow)" />
+    <!-- Jalur Peminjam ke tengah -->
+    <path d="M 842 508 L 842 606 Q 842 612 836 612 L 552 612" class="line" marker-end="url(#arrow)" />
+    <!-- Jalur Kepala Bengkel lurus ke Selesai -->
+    <line x1="550" y1="522" x2="550" y2="634" class="line" marker-end="url(#arrow)" />
+
+    <!-- 5. SELESAI (Terminator) -->
+    <rect x="498" y="636" width="104" height="36" rx="18" fill="url(#grad-term)" stroke="#3b6e8c" stroke-width="2" />
+    <text x="550" y="654" class="node-text">Selesai</text>
+  </svg>
+</div>
+
+</body>
+</html>
