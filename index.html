@@ -128,13 +128,13 @@
       <div class="row g-3 mb-4">
         <div class="col-6 col-md-3">
           <div class="card stat-card p-3 border-start border-4 border-primary">
-            <small class="text-muted fw-semibold">Total Unit Alat</small>
+            <small class="text-muted fw-semibold">Total Stok Unit</small>
             <h3 class="fw-bold mb-0 mt-1" id="stat-total">0</h3>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="card stat-card p-3 border-start border-4 border-success">
-            <small class="text-muted fw-semibold">Tersedia</small>
+            <small class="text-muted fw-semibold">Stok Tersedia</small>
             <h3 class="fw-bold text-success mb-0 mt-1" id="stat-tersedia">0</h3>
           </div>
         </div>
@@ -146,7 +146,7 @@
         </div>
         <div class="col-6 col-md-3">
           <div class="card stat-card p-3 border-start border-4 border-danger">
-            <small class="text-muted fw-semibold">Terlambat / Perbaikan</small>
+            <small class="text-muted fw-semibold">Telat / Rusak</small>
             <h3 class="fw-bold text-danger mb-0 mt-1" id="stat-masalah">0</h3>
           </div>
         </div>
@@ -156,7 +156,7 @@
       <ul class="nav nav-pills mb-4 no-print" id="main-tabs">
         <li class="nav-item" id="nav-dashboard">
           <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-dashboard">
-            <i class="bi bi-speedometer2 me-1"></i> Pemantauan Real-Time (FR-05)
+            <i class="bi bi-speedometer2 me-1"></i> Pemantauan &amp; Stok Real-Time (FR-05)
           </button>
         </li>
         <li class="nav-item" id="nav-peminjaman">
@@ -171,7 +171,7 @@
         </li>
         <li class="nav-item" id="nav-inventaris">
           <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-inventaris">
-            <i class="bi bi-box-seam me-1"></i> Master Alat (FR-02)
+            <i class="bi bi-box-seam me-1"></i> Master Alat &amp; Stok (FR-02)
           </button>
         </li>
         <li class="nav-item" id="nav-laporan">
@@ -184,18 +184,17 @@
       <!-- Konten Tab -->
       <div class="tab-content">
         
-        <!-- 1. TAB PEMANTAUAN REAL-TIME / KATALOG (FR-05) -->
+        <!-- 1. TAB PEMANTAUAN REAL-TIME / KATALOG STOK (FR-05) -->
         <div class="tab-pane fade show active" id="tab-dashboard">
           <div class="card card-panel p-4">
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-              <h5 class="fw-bold mb-0">Ketersediaan &amp; Status Alat Bengkel TI (Real-Time)</h5>
+              <h5 class="fw-bold mb-0">Ketersediaan &amp; Stok Alat Bengkel TI (Real-Time)</h5>
               <div class="d-flex gap-2">
                 <input type="text" id="search-alat" class="form-control form-control-sm" placeholder="Cari nama / kode alat..." onkeyup="renderAll()">
                 <select id="filter-status" class="form-select form-select-sm" onchange="renderAll()">
-                  <option value="ALL">Semua Status</option>
-                  <option value="Tersedia">Tersedia</option>
-                  <option value="Sedang Dipinjam">Sedang Dipinjam</option>
-                  <option value="Dalam Perbaikan">Dalam Perbaikan</option>
+                  <option value="ALL">Semua Ketersediaan</option>
+                  <option value="AVAILABLE">Stok Tersedia (&gt; 0)</option>
+                  <option value="EMPTY">Stok Habis (0)</option>
                 </select>
               </div>
             </div>
@@ -207,8 +206,10 @@
                     <th>Nama Alat</th>
                     <th>Kategori</th>
                     <th>Spesifikasi / Merek</th>
-                    <th>Kondisi Fisik</th>
-                    <th>Status Ketersediaan</th>
+                    <th class="text-center">Total Stok</th>
+                    <th class="text-center">Dipinjam / Rusak</th>
+                    <th class="text-center">Stok Tersedia</th>
+                    <th>Status</th>
                   </tr>
                 </thead>
                 <tbody id="tbody-dashboard"></tbody>
@@ -236,9 +237,15 @@
                     <label class="form-label fw-semibold">No. HP / WhatsApp</label>
                     <input type="text" id="pinjam-kontak" class="form-control" placeholder="0812xxxxxxxx" required>
                   </div>
-                  <div class="mb-3">
-                    <label class="form-label fw-semibold">Pilih Alat (Hanya Status Tersedia - NFR-05) <span class="text-danger">*</span></label>
-                    <select id="pinjam-alat" class="form-select" required></select>
+                  <div class="row g-2 mb-3">
+                    <div class="col-8">
+                      <label class="form-label fw-semibold">Pilih Alat (Stok &gt; 0) <span class="text-danger">*</span></label>
+                      <select id="pinjam-alat" class="form-select" onchange="updateMaxQty()" required></select>
+                    </div>
+                    <div class="col-4">
+                      <label class="form-label fw-semibold">Jumlah <span class="text-danger">*</span></label>
+                      <input type="number" id="pinjam-qty" class="form-control" min="1" value="1" required>
+                    </div>
                   </div>
                   <div class="mb-3">
                     <label class="form-label fw-semibold">Batas Waktu Pengembalian <span class="text-danger">*</span></label>
@@ -259,7 +266,7 @@
                       <tr>
                         <th>Kode</th>
                         <th>Peminjam</th>
-                        <th>Alat</th>
+                        <th>Alat (Qty)</th>
                         <th>Batas Kembali</th>
                         <th>Status</th>
                         <th>Bukti</th>
@@ -283,7 +290,7 @@
                   <tr>
                     <th>Kode Transaksi</th>
                     <th>Peminjam (NIM/NIP)</th>
-                    <th>Kode &amp; Nama Alat</th>
+                    <th>Alat &amp; Jumlah</th>
                     <th>Waktu Pinjam</th>
                     <th>Tenggat Kembali</th>
                     <th>Status Waktu</th>
@@ -296,12 +303,12 @@
           </div>
         </div>
 
-        <!-- 4. TAB MANAJEMEN INVENTARIS ALAT (FR-02) -->
+        <!-- 4. TAB MANAJEMEN INVENTARIS ALAT & STOK (FR-02) -->
         <div class="tab-pane fade" id="tab-inventaris">
           <div class="row g-4">
             <div class="col-md-4">
               <div class="card card-panel p-4">
-                <h5 class="fw-bold mb-3">Tambah Unit Alat Baru</h5>
+                <h5 class="fw-bold mb-3">Tambah Barang &amp; Stok Baru</h5>
                 <form id="form-tambah-alat">
                   <div class="mb-2">
                     <label class="form-label small fw-semibold">Kode Inventaris / Barcode</label>
@@ -309,7 +316,7 @@
                   </div>
                   <div class="mb-2">
                     <label class="form-label small fw-semibold">Nama Alat</label>
-                    <input type="text" id="alat-nama" class="form-control form-control-sm" placeholder="Contoh: Multimeter Digital" required>
+                    <input type="text" id="alat-nama" class="form-control form-control-sm" placeholder="Contoh: Tang Potong" required>
                   </div>
                   <div class="mb-2">
                     <label class="form-label small fw-semibold">Kategori</label>
@@ -320,9 +327,13 @@
                       <option value="Perangkat IoT">Perangkat IoT &amp; Mikrokontroler</option>
                     </select>
                   </div>
-                  <div class="mb-3">
+                  <div class="mb-2">
                     <label class="form-label small fw-semibold">Merek / Spesifikasi</label>
-                    <input type="text" id="alat-spek" class="form-control form-control-sm" placeholder="Contoh: Sanwa CD800a" required>
+                    <input type="text" id="alat-spek" class="form-control form-control-sm" placeholder="Contoh: Tekiro 6 Inch" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label small fw-semibold">Jumlah Stok Awal (Unit)</label>
+                    <input type="number" id="alat-stok" class="form-control form-control-sm" min="1" value="5" required>
                   </div>
                   <button type="submit" class="btn btn-success btn-sm w-100 fw-semibold">
                     <i class="bi bi-plus-lg"></i> Tambahkan ke Inventaris
@@ -333,7 +344,7 @@
             <div class="col-md-8">
               <div class="card card-panel p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h5 class="fw-bold mb-0">Master Data Inventaris Alat</h5>
+                  <h5 class="fw-bold mb-0">Master Data Inventaris &amp; Stok Barang</h5>
                   <button class="btn btn-outline-secondary btn-sm" onclick="resetDemoData()">
                     <i class="bi bi-arrow-clockwise"></i> Reset Data Demo
                   </button>
@@ -345,9 +356,9 @@
                         <th>Kode</th>
                         <th>Nama Alat</th>
                         <th>Kategori</th>
-                        <th>Spesifikasi</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
+                        <th class="text-center">Tersedia / Total</th>
+                        <th class="text-center">Rusak</th>
+                        <th>Aksi Stok &amp; Data</th>
                       </tr>
                     </thead>
                     <tbody id="tbody-master-alat"></tbody>
@@ -364,7 +375,7 @@
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
               <div>
                 <h5 class="fw-bold mb-0">Log Riwayat &amp; Rekapitulasi Transaksi</h5>
-                <small class="text-muted">Mencatat seluruh riwayat peminjaman, pengembalian, dan keterlambatan secara permanen.</small>
+                <small class="text-muted">Mencatat seluruh riwayat peminjaman, jumlah unit, pengembalian, dan keterlambatan.</small>
               </div>
               <div class="no-print d-flex gap-2">
                 <button class="btn btn-outline-success btn-sm" onclick="exportCSV()">
@@ -381,7 +392,7 @@
                   <tr>
                     <th>Kode Trx</th>
                     <th>Peminjam</th>
-                    <th>Alat Dipinjam</th>
+                    <th>Alat (Qty)</th>
                     <th>Waktu Pinjam</th>
                     <th>Tenggat</th>
                     <th>Waktu Kembali</th>
@@ -399,6 +410,31 @@
     </div>
   </div>
 
+  <!-- MODAL TAMBAH STOK BARANG (FITUR BARU) -->
+  <div class="modal fade" id="modalTambahStok" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h6 class="modal-title fw-bold"><i class="bi bi-plus-square me-1"></i> Tambah Stok Barang</h6>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="stok-item-id">
+          <p class="small mb-2">Barang: <strong id="stok-item-nama"></strong></p>
+          <p class="small text-muted mb-3">Stok saat ini: <strong id="stok-item-sekarang"></strong> unit</p>
+          <div class="mb-2">
+            <label class="form-label small fw-semibold">Jumlah Penambahan Unit</label>
+            <input type="number" id="stok-tambah-qty" class="form-control" min="1" value="1" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-success btn-sm" onclick="simpanTambahStok()">Simpan Stok</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL VERIFIKASI PENGEMBALIAN (FR-04) -->
   <div class="modal fade" id="modalKembali" tabindex="-1">
     <div class="modal-dialog">
@@ -410,17 +446,17 @@
         <div class="modal-body">
           <input type="hidden" id="kembali-trx-id">
           <p class="mb-2">Transaksi: <strong id="kembali-info-trx"></strong></p>
-          <p class="mb-3">Alat: <strong id="kembali-info-alat"></strong></p>
+          <p class="mb-3">Alat &amp; Jumlah: <strong id="kembali-info-alat"></strong></p>
           <div class="mb-3">
             <label class="form-label fw-semibold">Kondisi Fisik Alat Saat Dikembalikan (FR-04)</label>
             <select id="kembali-kondisi" class="form-select">
-              <option value="Baik">Baik / Normal (Status otomatis kembali Tersedia)</option>
-              <option value="Rusak">Rusak / Bermasalah (Status otomatis Dalam Perbaikan)</option>
+              <option value="Baik">Baik / Normal (Stok tersedia otomatis bertambah)</option>
+              <option value="Rusak">Rusak / Bermasalah (Masuk daftar perbaikan)</option>
             </select>
           </div>
           <div class="mb-2">
             <label class="form-label fw-semibold">Catatan Petugas PLP</label>
-            <input type="text" id="kembali-catatan" class="form-control" placeholder="Opsional (misal: kabel probe aman / layar retak)">
+            <input type="text" id="kembali-catatan" class="form-control" placeholder="Opsional (misal: semua unit lengkap & normal)">
           </div>
         </div>
         <div class="modal-footer">
@@ -450,17 +486,16 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // ==================== DATA AWAL (ENTITAS ITEMS & LOANS) ====================
+    // ==================== DATA AWAL DENGAN STOK (ENTITAS ITEMS & LOANS) ====================
     const defaultItems = [
-      { id: 'INV-TI-001', nama: 'Multimeter Digital', kategori: 'Alat Ukur', spek: 'Sanwa CD800a', kondisi: 'Baik', status: 'Tersedia' },
-      { id: 'INV-TI-002', nama: 'Tang Crimping RJ45', kategori: 'Perkakas Jaringan', spek: 'Pro\'sKit CP-376TR', kondisi: 'Baik', status: 'Sedang Dipinjam' },
-      { id: 'INV-TI-003', nama: 'Laptop Praktikum 01', kategori: 'Komputer & Laptop', spek: 'Lenovo ThinkPad i5 RAM 16GB', kondisi: 'Baik', status: 'Tersedia' },
-      { id: 'INV-TI-004', nama: 'LAN Cable Tester', kategori: 'Alat Ukur', spek: 'Noyafa NF-468', kondisi: 'Baik', status: 'Tersedia' },
-      { id: 'INV-TI-005', nama: 'Laptop Praktikum 02', kategori: 'Komputer & Laptop', spek: 'ASUS Vivobook i7', kondisi: 'Baik', status: 'Sedang Dipinjam' },
-      { id: 'INV-TI-006', nama: 'ESP32 IoT Starter Kit', kategori: 'Perangkat IoT', spek: 'ESP32 DevKit V1 + Sensor', kondisi: 'Rusak', status: 'Dalam Perbaikan' }
+      { id: 'INV-TI-001', nama: 'Multimeter Digital', kategori: 'Alat Ukur', spek: 'Sanwa CD800a', totalStok: 10, stokTersedia: 10, stokRusak: 0 },
+      { id: 'INV-TI-002', nama: 'Tang Crimping RJ45', kategori: 'Perkakas Jaringan', spek: 'Pro\'sKit CP-376TR', totalStok: 8, stokTersedia: 6, stokRusak: 0 },
+      { id: 'INV-TI-003', nama: 'Laptop Praktikum Lenovo', kategori: 'Komputer & Laptop', spek: 'ThinkPad i5 RAM 16GB', totalStok: 5, stokTersedia: 5, stokRusak: 0 },
+      { id: 'INV-TI-004', nama: 'LAN Cable Tester', kategori: 'Alat Ukur', spek: 'Noyafa NF-468', totalStok: 12, stokTersedia: 12, stokRusak: 0 },
+      { id: 'INV-TI-005', nama: 'Laptop Praktikum ASUS', kategori: 'Komputer & Laptop', spek: 'Vivobook i7 RAM 16GB', totalStok: 4, stokTersedia: 3, stokRusak: 0 },
+      { id: 'INV-TI-006', nama: 'ESP32 IoT Starter Kit', kategori: 'Perangkat IoT', spek: 'ESP32 DevKit V1 + Sensor', totalStok: 6, stokTersedia: 5, stokRusak: 1 }
     ];
 
-    // Membuat contoh 1 transaksi terlambat & 1 transaksi aktif
     const now = new Date();
     const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
     const twoDaysAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000).toISOString().slice(0, 16);
@@ -474,8 +509,9 @@
         kontak: '081265432100',
         itemId: 'INV-TI-002',
         itemNama: 'Tang Crimping RJ45',
+        qty: 2,
         waktuPinjam: twoDaysAgo,
-        tenggat: yesterday, // Sudah lewat -> Terlambat otomatis
+        tenggat: yesterday,
         waktuKembali: null,
         kondisiKembali: '-',
         catatan: '-',
@@ -487,7 +523,8 @@
         nama: 'Siti Rahmawati',
         kontak: '081377889900',
         itemId: 'INV-TI-005',
-        itemNama: 'Laptop Praktikum 02',
+        itemNama: 'Laptop Praktikum ASUS',
+        qty: 1,
         waktuPinjam: now.toISOString().slice(0, 16),
         tenggat: tomorrow,
         waktuKembali: null,
@@ -497,19 +534,19 @@
       }
     ];
 
-    let items = JSON.parse(localStorage.getItem('bengkel_items')) || defaultItems;
-    let loans = JSON.parse(localStorage.getItem('bengkel_loans')) || defaultLoans;
+    let items = JSON.parse(localStorage.getItem('bengkel_items_v2')) || defaultItems;
+    let loans = JSON.parse(localStorage.getItem('bengkel_loans_v2')) || defaultLoans;
     let currentRole = 'PLP';
 
     function saveData() {
-      localStorage.setItem('bengkel_items', JSON.stringify(items));
-      localStorage.setItem('bengkel_loans', JSON.stringify(loans));
+      localStorage.setItem('bengkel_items_v2', JSON.stringify(items));
+      localStorage.setItem('bengkel_loans_v2', JSON.stringify(loans));
     }
 
     function resetDemoData() {
-      if (confirm('Kembalikan data ke pengaturan awal demo?')) {
-        localStorage.removeItem('bengkel_items');
-        localStorage.removeItem('bengkel_loans');
+      if (confirm('Kembalikan data barang dan stok ke pengaturan awal demo?')) {
+        localStorage.removeItem('bengkel_items_v2');
+        localStorage.removeItem('bengkel_loans_v2');
         location.reload();
       }
     }
@@ -552,17 +589,11 @@
     }
 
     function applyRolePermissions() {
-      // Tampilkan semua tab terlebih dahulu
       ['nav-dashboard', 'nav-peminjaman', 'nav-pengembalian', 'nav-inventaris', 'nav-laporan'].forEach(id => {
         document.getElementById(id).classList.remove('d-none');
       });
 
-      // Batasi menu berdasarkan peran (FR-01)
-      if (currentRole === 'KABENG') {
-        document.getElementById('nav-peminjaman').classList.add('d-none');
-        document.getElementById('nav-pengembalian').classList.add('d-none');
-        document.getElementById('nav-inventaris').classList.add('d-none');
-      } else if (currentRole === 'PEMINJAM') {
+      if (currentRole === 'KABENG' || currentRole === 'PEMINJAM') {
         document.getElementById('nav-peminjaman').classList.add('d-none');
         document.getElementById('nav-pengembalian').classList.add('d-none');
         document.getElementById('nav-inventaris').classList.add('d-none');
@@ -580,7 +611,7 @@
       document.getElementById('pinjam-tenggat').value = next4Hours.toISOString().slice(0, 16);
     }
 
-    // ==================== RENDER & LOGIKA REAL-TIME ====================
+    // ==================== RENDER & LOGIKA STOK REAL-TIME ====================
     function isOverdue(tenggatStr) {
       return new Date() > new Date(tenggatStr);
     }
@@ -590,8 +621,19 @@
       return dtStr.replace('T', ' ');
     }
 
+    function updateMaxQty() {
+      const itemId = document.getElementById('pinjam-alat').value;
+      const qtyInput = document.getElementById('pinjam-qty');
+      const item = items.find(i => i.id === itemId);
+      if (item) {
+        qtyInput.max = item.stokTersedia;
+        if (parseInt(qtyInput.value) > item.stokTersedia) {
+          qtyInput.value = item.stokTersedia;
+        }
+      }
+    }
+
     function renderAll() {
-      // Hitung keterlambatan (FR-06)
       let overdueCount = 0;
       loans.forEach(l => {
         if (l.status === 'Dipinjam' && isOverdue(l.tenggat)) overdueCount++;
@@ -607,18 +649,18 @@
         banner.classList.remove('d-flex');
       }
 
-      // Update Statistik (FR-05 & NFR-01)
-      const total = items.length;
-      const tersedia = items.filter(i => i.status === 'Tersedia').length;
-      const dipinjam = items.filter(i => i.status === 'Sedang Dipinjam').length;
-      const perbaikan = items.filter(i => i.status === 'Dalam Perbaikan').length;
+      // Hitung total keseluruhan unit stok (FR-05 & NFR-01)
+      const totalUnit = items.reduce((sum, i) => sum + i.totalStok, 0);
+      const tersediaUnit = items.reduce((sum, i) => sum + i.stokTersedia, 0);
+      const rusakUnit = items.reduce((sum, i) => sum + i.stokRusak, 0);
+      const dipinjamUnit = totalUnit - tersediaUnit - rusakUnit;
 
-      document.getElementById('stat-total').textContent = total;
-      document.getElementById('stat-tersedia').textContent = tersedia;
-      document.getElementById('stat-dipinjam').textContent = dipinjam;
-      document.getElementById('stat-masalah').textContent = `${overdueCount} / ${perbaikan}`;
+      document.getElementById('stat-total').textContent = `${totalUnit} Unit`;
+      document.getElementById('stat-tersedia').textContent = `${tersediaUnit} Unit`;
+      document.getElementById('stat-dipinjam').textContent = `${dipinjamUnit} Unit`;
+      document.getElementById('stat-masalah').textContent = `${overdueCount} Trx / ${rusakUnit} Unit`;
 
-      // Render Tabel Dasbor Real-Time
+      // 1. Render Tabel Dasbor Pemantauan Stok Real-Time
       const keyword = document.getElementById('search-alat').value.toLowerCase();
       const filterStatus = document.getElementById('filter-status').value;
       const tbodyDash = document.getElementById('tbody-dashboard');
@@ -626,12 +668,18 @@
 
       items.filter(item => {
         const matchText = item.nama.toLowerCase().includes(keyword) || item.id.toLowerCase().includes(keyword);
-        const matchStatus = filterStatus === 'ALL' || item.status === filterStatus;
+        const matchStatus = filterStatus === 'ALL'
+          || (filterStatus === 'AVAILABLE' && item.stokTersedia > 0)
+          || (filterStatus === 'EMPTY' && item.stokTersedia === 0);
         return matchText && matchStatus;
       }).forEach(item => {
-        let badgeClass = 'bg-success';
-        if (item.status === 'Sedang Dipinjam') badgeClass = 'bg-warning text-dark';
-        if (item.status === 'Dalam Perbaikan') badgeClass = 'bg-danger';
+        const sedangDipinjam = item.totalStok - item.stokTersedia - item.stokRusak;
+        let badgeHtml = `<span class="badge badge-status bg-success">Tersedia (${item.stokTersedia})</span>`;
+        if (item.stokTersedia === 0) {
+          badgeHtml = `<span class="badge badge-status bg-danger">Stok Habis</span>`;
+        } else if (item.stokTersedia <= 2) {
+          badgeHtml = `<span class="badge badge-status bg-warning text-dark">Menipis (${item.stokTersedia})</span>`;
+        }
 
         tbodyDash.innerHTML += `
           <tr>
@@ -639,20 +687,24 @@
             <td>${item.nama}</td>
             <td>${item.kategori}</td>
             <td>${item.spek}</td>
-            <td>${item.kondisi}</td>
-            <td><span class="badge badge-status ${badgeClass}">${item.status}</span></td>
+            <td class="text-center fw-bold">${item.totalStok}</td>
+            <td class="text-center text-muted">${sedangDipinjam} dipinjam / ${item.stokRusak} rusak</td>
+            <td class="text-center fw-bold text-primary fs-6">${item.stokTersedia}</td>
+            <td>${badgeHtml}</td>
           </tr>
         `;
       });
 
-      // Dropdown Pilihan Alat Tersedia (NFR-05: Mencegah Peminjaman Ganda)
+      // 2. Dropdown Pilihan Alat (Hanya yang stokTersedia > 0)
       const selectAlat = document.getElementById('pinjam-alat');
+      const prevSelected = selectAlat.value;
       selectAlat.innerHTML = '<option value="">-- Pilih Alat Tersedia --</option>';
-      items.filter(i => i.status === 'Tersedia').forEach(i => {
-        selectAlat.innerHTML += `<option value="${i.id}">${i.id} - ${i.nama} (${i.spek})</option>`;
+      items.filter(i => i.stokTersedia > 0).forEach(i => {
+        selectAlat.innerHTML += `<option value="${i.id}">${i.id} - ${i.nama} [Sisa Stok: ${i.stokTersedia}]</option>`;
       });
+      if (prevSelected) selectAlat.value = prevSelected;
 
-      // Render Tabel Peminjaman Aktif & Pengembalian
+      // 3. Render Tabel Peminjaman Aktif & Pengembalian
       const tbodyAktif = document.getElementById('tbody-pinjam-aktif');
       const tbodyKembali = document.getElementById('tbody-pengembalian');
       tbodyAktif.innerHTML = '';
@@ -668,7 +720,7 @@
           <tr>
             <td class="small fw-bold">${l.trxId}</td>
             <td class="small">${l.nama}<br><span class="text-muted">${l.nim}</span></td>
-            <td class="small">${l.itemId} - ${l.itemNama}</td>
+            <td class="small">${l.itemNama} <span class="badge bg-secondary">${l.qty} unit</span></td>
             <td class="small">${formatDateTime(l.tenggat)}</td>
             <td>${statusBadge}</td>
             <td><button class="btn btn-outline-primary btn-sm py-0" onclick="lihatBukti('${l.trxId}')"><i class="bi bi-receipt"></i></button></td>
@@ -679,7 +731,7 @@
           <tr class="${telat ? 'table-danger' : ''}">
             <td class="fw-bold">${l.trxId}</td>
             <td>${l.nama} (${l.nim})</td>
-            <td>${l.itemId} - ${l.itemNama}</td>
+            <td>${l.itemId} - ${l.itemNama} <strong>(${l.qty} unit)</strong></td>
             <td>${formatDateTime(l.waktuPinjam)}</td>
             <td>${formatDateTime(l.tenggat)}</td>
             <td>${statusBadge}</td>
@@ -692,26 +744,33 @@
         `;
       });
 
-      // Render Master Inventaris (FR-02)
+      // 4. Render Master Inventaris & Kontrol Stok (FR-02)
       const tbodyMaster = document.getElementById('tbody-master-alat');
       tbodyMaster.innerHTML = '';
       items.forEach(item => {
         tbodyMaster.innerHTML += `
           <tr>
             <td class="fw-semibold">${item.id}</td>
-            <td>${item.nama}</td>
+            <td>${item.nama}<br><small class="text-muted">${item.spek}</small></td>
             <td>${item.kategori}</td>
-            <td>${item.spek}</td>
-            <td>${item.status}</td>
+            <td class="text-center">
+              <span class="badge bg-primary fs-6">${item.stokTersedia} / ${item.totalStok}</span>
+            </td>
+            <td class="text-center">
+              ${item.stokRusak > 0 ? `<span class="badge bg-danger">${item.stokRusak}</span>` : '0'}
+            </td>
             <td>
-              ${item.status === 'Dalam Perbaikan' ? `<button class="btn btn-outline-success btn-sm py-0 me-1" onclick="selesaiPerbaikan('${item.id}')">Selesai Servis</button>` : ''}
-              <button class="btn btn-outline-danger btn-sm py-0" onclick="hapusAlat('${item.id}')"><i class="bi bi-trash"></i></button>
+              <button class="btn btn-success btn-sm py-0 me-1" title="Tambah Stok" onclick="bukaModalTambahStok('${item.id}')">
+                <i class="bi bi-plus-circle"></i> Stok
+              </button>
+              ${item.stokRusak > 0 ? `<button class="btn btn-outline-primary btn-sm py-0 me-1" title="Selesai Perbaikan 1 Unit" onclick="selesaiPerbaikan('${item.id}')">Servis</button>` : ''}
+              <button class="btn btn-outline-danger btn-sm py-0" title="Hapus Barang" onclick="hapusAlat('${item.id}')"><i class="bi bi-trash"></i></button>
             </td>
           </tr>
         `;
       });
 
-      // Render Laporan & Riwayat (FR-07)
+      // 5. Render Laporan & Riwayat (FR-07)
       const tbodyLaporan = document.getElementById('tbody-laporan');
       tbodyLaporan.innerHTML = '';
       loans.forEach(l => {
@@ -720,7 +779,7 @@
           <tr>
             <td>${l.trxId}</td>
             <td>${l.nama} (${l.nim})</td>
-            <td>${l.itemId} - ${l.itemNama}</td>
+            <td>${l.itemId} - ${l.itemNama} (${l.qty} unit)</td>
             <td>${formatDateTime(l.waktuPinjam)}</td>
             <td>${formatDateTime(l.tenggat)}</td>
             <td>${formatDateTime(l.waktuKembali)}</td>
@@ -739,11 +798,12 @@
     document.getElementById('form-pinjam').addEventListener('submit', function(e) {
       e.preventDefault();
       const itemId = document.getElementById('pinjam-alat').value;
+      const qty = parseInt(document.getElementById('pinjam-qty').value);
       const item = items.find(i => i.id === itemId);
 
-      // Validasi Integritas (NFR-05)
-      if (!item || item.status !== 'Tersedia') {
-        alert('Gagal: Alat tidak tersedia atau sedang dipinjam!');
+      // Validasi Ketersediaan Stok (NFR-05)
+      if (!item || item.stokTersedia < qty || qty < 1) {
+        alert(`Gagal: Stok tersedia hanya ${item ? item.stokTersedia : 0} unit!`);
         return;
       }
 
@@ -755,6 +815,7 @@
         kontak: document.getElementById('pinjam-kontak').value,
         itemId: item.id,
         itemNama: item.nama,
+        qty: qty,
         waktuPinjam: new Date().toISOString().slice(0, 16),
         tenggat: document.getElementById('pinjam-tenggat').value,
         waktuKembali: null,
@@ -763,11 +824,12 @@
         status: 'Dipinjam'
       };
 
-      // Update status stok otomatis
-      item.status = 'Sedang Dipinjam';
+      // Kurangi stok tersedia secara otomatis
+      item.stokTersedia -= qty;
       loans.unshift(newLoan);
       saveData();
       this.reset();
+      document.getElementById('pinjam-qty').value = 1;
       setDefaultTenggat();
       renderAll();
       lihatBukti(trxId);
@@ -781,12 +843,12 @@
           <tr><td class="text-muted">Kode Transaksi</td><td class="fw-bold">: ${l.trxId}</td></tr>
           <tr><td class="text-muted">Nama Peminjam</td><td>: ${l.nama} (${l.nim})</td></tr>
           <tr><td class="text-muted">Kontak</td><td>: ${l.kontak}</td></tr>
-          <tr><td class="text-muted">Alat Dipinjam</td><td class="fw-bold">: ${l.itemId} - ${l.itemNama}</td></tr>
+          <tr><td class="text-muted">Alat Dipinjam</td><td class="fw-bold">: ${l.itemId} - ${l.itemNama} (${l.qty} Unit)</td></tr>
           <tr><td class="text-muted">Waktu Pinjam</td><td>: ${formatDateTime(l.waktuPinjam)}</td></tr>
           <tr><td class="text-muted">Batas Kembali</td><td class="text-danger fw-bold">: ${formatDateTime(l.tenggat)}</td></tr>
         </table>
         <div class="alert alert-info small mb-0">
-          Harap kembalikan alat tepat waktu sesuai tenggat yang tertera kepada petugas PLP Bengkel TI.
+          Harap kembalikan seluruh unit alat tepat waktu kepada petugas PLP Bengkel TI.
         </div>
       `;
       new bootstrap.Modal(document.getElementById('modalBukti')).show();
@@ -798,7 +860,7 @@
       if (!l) return;
       document.getElementById('kembali-trx-id').value = trxId;
       document.getElementById('kembali-info-trx').textContent = `${l.trxId} - ${l.nama}`;
-      document.getElementById('kembali-info-alat').textContent = `${l.itemId} (${l.itemNama})`;
+      document.getElementById('kembali-info-alat').textContent = `${l.itemId} (${l.itemNama}) - ${l.qty} Unit`;
       new bootstrap.Modal(document.getElementById('modalKembali')).show();
     }
 
@@ -815,10 +877,13 @@
       l.catatan = catatan;
       l.status = 'Selesai';
 
-      // Perbarui status alat otomatis sesuai verifikasi fisik (FR-04)
+      // Kembalikan stok tersedia atau masukkan ke stok rusak (FR-04)
       if (item) {
-        item.kondisi = kondisi;
-        item.status = kondisi === 'Baik' ? 'Tersedia' : 'Dalam Perbaikan';
+        if (kondisi === 'Baik') {
+          item.stokTersedia += l.qty;
+        } else {
+          item.stokRusak += l.qty;
+        }
       }
 
       saveData();
@@ -826,12 +891,14 @@
       renderAll();
     }
 
-    // ==================== AKSI MANAJEMEN INVENTARIS (FR-02) ====================
+    // ==================== AKSI MANAJEMEN INVENTARIS & STOK (FR-02) ====================
     document.getElementById('form-tambah-alat').addEventListener('submit', function(e) {
       e.preventDefault();
       const id = document.getElementById('alat-kode').value.trim().toUpperCase();
+      const stokAwal = parseInt(document.getElementById('alat-stok').value);
+
       if (items.some(i => i.id === id)) {
-        alert('Kode inventaris sudah terdaftar!');
+        alert('Kode inventaris sudah terdaftar! Gunakan tombol "+ Stok" pada tabel untuk menambah jumlah stok.');
         return;
       }
       items.push({
@@ -839,19 +906,48 @@
         nama: document.getElementById('alat-nama').value,
         kategori: document.getElementById('alat-kategori').value,
         spek: document.getElementById('alat-spek').value,
-        kondisi: 'Baik',
-        status: 'Tersedia'
+        totalStok: stokAwal,
+        stokTersedia: stokAwal,
+        stokRusak: 0
       });
       saveData();
       this.reset();
+      document.getElementById('alat-stok').value = 5;
       renderAll();
     });
 
-    function selesaiPerbaikan(id) {
+    function bukaModalTambahStok(id) {
+      const item = items.find(i => i.id === id);
+      if (!item) return;
+      document.getElementById('stok-item-id').value = item.id;
+      document.getElementById('stok-item-nama').textContent = `${item.id} - ${item.nama}`;
+      document.getElementById('stok-item-sekarang').textContent = `${item.stokTersedia} tersedia dari ${item.totalStok}`;
+      document.getElementById('stok-tambah-qty').value = 1;
+      new bootstrap.Modal(document.getElementById('modalTambahStok')).show();
+    }
+
+    function simpanTambahStok() {
+      const id = document.getElementById('stok-item-id').value;
+      const tambahan = parseInt(document.getElementById('stok-tambah-qty').value);
+      if (!tambahan || tambahan < 1) {
+        alert('Masukkan jumlah penambahan minimal 1 unit.');
+        return;
+      }
       const item = items.find(i => i.id === id);
       if (item) {
-        item.kondisi = 'Baik';
-        item.status = 'Tersedia';
+        item.totalStok += tambahan;
+        item.stokTersedia += tambahan;
+        saveData();
+        bootstrap.Modal.getInstance(document.getElementById('modalTambahStok')).hide();
+        renderAll();
+      }
+    }
+
+    function selesaiPerbaikan(id) {
+      const item = items.find(i => i.id === id);
+      if (item && item.stokRusak > 0) {
+        item.stokRusak -= 1;
+        item.stokTersedia += 1;
         saveData();
         renderAll();
       }
@@ -859,11 +955,12 @@
 
     function hapusAlat(id) {
       const item = items.find(i => i.id === id);
-      if (item && item.status === 'Sedang Dipinjam') {
-        alert('Alat sedang dipinjam dan tidak dapat dihapus!');
+      const sedangDipinjam = item.totalStok - item.stokTersedia - item.stokRusak;
+      if (item && sedangDipinjam > 0) {
+        alert(`Tidak dapat menghapus! Masih ada ${sedangDipinjam} unit alat ini yang sedang dipinjam.`);
         return;
       }
-      if (confirm(`Hapus alat ${id} dari master data?`)) {
+      if (confirm(`Hapus alat ${id} beserta seluruh stoknya dari master data?`)) {
         items = items.filter(i => i.id !== id);
         saveData();
         renderAll();
@@ -872,14 +969,14 @@
 
     // ==================== EKSPOR LAPORAN CSV (FR-07) ====================
     function exportCSV() {
-      let csv = 'Kode Transaksi,NIM/NIP,Nama Peminjam,Kode Alat,Nama Alat,Waktu Pinjam,Tenggat,Waktu Kembali,Kondisi,Status\n';
+      let csv = 'Kode Transaksi,NIM/NIP,Nama Peminjam,Kode Alat,Nama Alat,Jumlah Unit,Waktu Pinjam,Tenggat,Waktu Kembali,Kondisi,Status\n';
       loans.forEach(l => {
-        csv += `"${l.trxId}","${l.nim}","${l.nama}","${l.itemId}","${l.itemNama}","${formatDateTime(l.waktuPinjam)}","${formatDateTime(l.tenggat)}","${formatDateTime(l.waktuKembali)}","${l.kondisiKembali}","${l.status}"\n`;
+        csv += `"${l.trxId}","${l.nim}","${l.nama}","${l.itemId}","${l.itemNama}","${l.qty}","${formatDateTime(l.waktuPinjam)}","${formatDateTime(l.tenggat)}","${formatDateTime(l.waktuKembali)}","${l.kondisiKembali}","${l.status}"\n`;
       });
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = 'Laporan_Peminjaman_Bengkel_TI.csv';
+      link.download = 'Laporan_Peminjaman_Stok_Bengkel_TI.csv';
       link.click();
     }
   </script>
